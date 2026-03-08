@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Mom ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* SOFT, WARM UI THEME */
+        :root {
+            --bg-color: #fff0f5; /* Lavender blush */
+            --text-main: #5c4a4d; /* Soft dark brown */
+            --accent-pink: #ffb6c1; /* Light pink */
+            --highlight: #ff6b81; /* Deeper pink for active elements */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--highlight);
+        }
+
+        /* 1. VIRTUAL ENVELOPE (Entrance) */
+        #envelope-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #fdfbfb;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1.5s ease;
+        }
+        
+        .envelope {
+            width: 200px; height: 130px;
+            background: #ffe4e1;
+            position: relative;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .envelope:hover { transform: translateY(-5px) scale(1.05); }
+        
+        .envelope-flap {
+            position: absolute; top: 0; left: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-top: 70px solid #ffb6c1;
+            transform-origin: top;
+            transition: transform 1s ease;
+        }
+        
+        .envelope-text {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        /* 2. MAIN CONTENT (Hidden initially) */
+        #main-content {
+            display: none;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 3. FLOATING LOVE PARTICLES */
+        .heart-particle {
+            position: fixed;
+            bottom: -50px;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            animation: floatUp 10s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 4. LYRICS SECTION (K-Pop App Style) */
+        .music-player {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin: 30px 0;
+        }
+        .lyrics-window {
+            height: 120px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 15px;
+            mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+        }
+        .lyrics-content {
+            position: absolute;
+            top: 50px; width: 100%;
+            transition: transform 0.5s ease-out;
+        }
+        .lyric-line {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            color: #d1c4c6; /* dimmed */
+            transition: all 0.3s;
+        }
+        .lyric-line.active {
+            color: var(--highlight);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        /* 5. LEGACY COUNTDOWN (Count-up) */
+        .stats-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            min-width: 100px;
+        }
+        .stat-num { font-size: 2rem; font-weight: bold; color: var(--highlight); }
+        .stat-label { font-size: 0.9rem; color: #888; }
+
+        /* 6. INTERACTIVE BOUQUET */
+        .bouquet {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 50px 0;
+            flex-wrap: wrap;
+        }
+        .flower-item {
+            text-align: center;
+            cursor: pointer;
+            width: 120px;
+        }
+        .flower-icon {
+            font-size: 4rem;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flower-item:hover .flower-icon { transform: scale(1.2); }
+        .flower-message {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .flower-item.bloomed .flower-icon { transform: scale(1.3) rotate(10deg); }
+        .flower-item.bloomed .flower-message { opacity: 1; transform: translateY(0); }
+
+        /* 7. BIRTHDAY CAKE */
+        .cake-container { margin: 60px auto; position: relative; width: 150px; }
+        .cake-bottom { background: #f4cccc; height: 60px; width: 150px; border-radius: 10px; position: relative; box-shadow: inset 0 -10px rgba(0,0,0,0.1); }
+        .cake-top { background: #fff; height: 30px; width: 150px; border-radius: 15px; position: absolute; top: -15px; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+        .candle { background: #ffe4e1; width: 10px; height: 35px; position: absolute; top: -40px; left: 70px; border-radius: 5px; }
+        .flame {
+            background: #ffdb58; width: 15px; height: 25px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: absolute; top: -25px; left: -2.5px;
+            animation: flicker 0.5s infinite alternate;
+        }
+
+        /* Animations */
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes flicker {
+            0% { transform: scale(1); background: #ffdb58; }
+            100% { transform: scale(1.1); background: #ff8c00; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="envelope-screen" onclick="openEnvelope()">
+        <h1 style="margin-bottom: 30px;">For the best Mom...</h1>
+        <div class="envelope">
+            <div class="envelope-flap" id="flap"></div>
+        </div>
+        <p class="envelope-text">Tap the envelope to open ❤️</p>
+    </div>
+
+    <div id="main-content">
+        <h1>Happy Birthday, Mom!</h1>
+        <p>I made this little space just for you.</p>
+
+        <div class="music-player">
+            <audio id="bgm" src="song.mp3" loop></audio>
+            <h3>Our Song</h3>
+            <div class="lyrics-window">
+                <div class="lyrics-content" id="lyrics-content">
+                    </div>
+            </div>
+        </div>
+
+        <br><hr style="border:0; border-top: 1px solid #fce4ec;"><br>
+
+        <h2>The World is Brighter Because of You</h2>
+        <p>You've been making life beautiful for...</p>
+        <div class="stats-grid">
+            <div class="stat-box"><div class="stat-num" id="d-days">0</div><div class="stat-label">Days</div></div>
+            <div class="stat-box"><div class="stat-num" id="d-hours">0</div><div class="stat-label">Hours</div></div>
+            <div class="stat-box"><div class="stat-num" id="d-mins">0</div><div class="stat-label">Minutes</div></div>
+            <div class="stat-box"><div class="stat-num" id="d-secs">0</div><div class="stat-label">Seconds</div></div>
+        </div>
+
+        <br><br><br>
+
+        <h2>A Digital Bouquet</h2>
+        <p>Tap each flower to see why I love you.</p>
+        <div class="bouquet">
+            <div class="flower-item" onclick="this.classList.toggle('bloomed')">
+                <div class="flower-icon">🌷</div>
+                <div class="flower-message">For your endless patience with me.</div>
+            </div>
+            <div class="flower-item" onclick="this.classList.toggle('bloomed')">
+                <div class="flower-icon">🌸</div>
+                <div class="flower-message">For your help whenever I'm busy.</div>
+            </div>
+            <div class="flower-item" onclick="this.classList.toggle('bloomed')">
+                <div class="flower-icon">🌻</div>
+                <div class="flower-message">For being my absolute biggest cheerleader.</div>
+            </div>
+        </div>
+
+        <div class="cake-container">
+            <div class="cake-top"></div>
+            <div class="cake-bottom"></div>
+            <div class="candle"><div class="flame"></div></div>
+        </div>
+        <h2>I love you, Mom!</h2>
+        <p style="padding-bottom: 50px;">Happy Birthday!</p>
+    </div>
+
+    <script>
+        // --- 1. ENVELOPE & INITIALIZATION LOGIC ---
+        function openEnvelope() {
+            // Open flap
+            document.getElementById('flap').style.transform = 'rotateX(180deg)';
+            
+            setTimeout(() => {
+                const screen = document.getElementById('envelope-screen');
+                screen.style.opacity = '0';
+                setTimeout(() => {
+                    screen.style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    
+                    // Start Music
+                    const audio = document.getElementById('bgm');
+                    // Uncomment below when you have an actual mp3 file, otherwise it throws an error
+                    audio.play().catch(e => console.log("Audio play blocked until file added."));
+
+                    // Start effects
+                    startParticles();
+                    startLegacyTimer();
+                }, 1000);
+            }, 600);
+        }
+
+        // --- 2. FLOATING PARTICLES LOGIC ---
+        function startParticles() {
+            const symbols = ['❤️', '✨', '🌸', '💖'];
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.classList.add('heart-particle');
+                particle.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                // Random position and size
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.fontSize = (Math.random() * 1.5 + 0.5) + 'rem';
+                particle.style.animationDuration = (Math.random() * 5 + 7) + 's';
+                
+                document.body.appendChild(particle);
+                
+                // Remove after animation
+                setTimeout(() => { particle.remove(); }, 12000);
+            }, 800); // New particle every 800ms
+        }
+
+        // --- 3. K-POP STYLE LYRICS LOGIC ---
+        // Edit this array! "time" is seconds into the song, "text" is the lyric.
+        const lyricData = [
+            { time: 0, text: "Happy birthday to you," },
+            { time: 4, text: "Happy birthday to you," },
+            { time: 7, text: "Happy birthday to Mommy..." },
+            { time: 12, text: "Happy birthday to you! ❤️" }
+        ];
+
+        const lyricsContent = document.getElementById('lyrics-content');
+        const audio = document.getElementById('bgm');
+        
+        // Build the lyrics DOM
+        lyricData.forEach((line, index) => {
+            let p = document.createElement('p');
+            p.className = 'lyric-line';
+            p.id = 'lyric-' + index;
+            p.innerText = line.text;
+            lyricsContent.appendChild(p);
+        });
+
+        // Sync lyrics with audio
+        audio.addEventListener('timeupdate', () => {
+            const currentTime = audio.currentTime;
+            
+            // Find the active lyric
+            let activeIndex = -1;
+            for(let i = 0; i < lyricData.length; i++) {
+                if(currentTime >= lyricData[i].time) {
+                    activeIndex = i;
+                }
+            }
+
+            if(activeIndex !== -1) {
+                // Remove active class from all
+                document.querySelectorAll('.lyric-line').forEach(el => el.classList.remove('active'));
+                
+                // Add active class to current
+                const activeLyric = document.getElementById('lyric-' + activeIndex);
+                activeLyric.classList.add('active');
+                
+                // Scroll the container (moves it up by 36px per line)
+                const scrollAmount = activeIndex * 36; 
+                lyricsContent.style.transform = `translateY(-${scrollAmount}px)`;
+            }
+        });
+
+        // --- 4. LEGACY TIMER LOGIC ---
+        // SET YOUR MOM'S BIRTHDATE HERE (Year, Month (0-11), Day)
+        // Note: Months in JS are 0-indexed (0 = Jan, 1 = Feb, etc.)
+        const momsBirthday = new Date(1976, 3, 9); // Example: June 15, 1975
+
+        function startLegacyTimer() {
+            setInterval(() => {
+                const now = new Date();
+                const diff = now - momsBirthday; // difference in milliseconds
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const mins = Math.floor((diff / 1000 / 60) % 60);
+                const secs = Math.floor((diff / 1000) % 60);
+
+                document.getElementById('d-days').innerText = days.toLocaleString();
+                document.getElementById('d-hours').innerText = hours;
+                document.getElementById('d-mins').innerText = mins;
+                document.getElementById('d-secs').innerText = secs;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
